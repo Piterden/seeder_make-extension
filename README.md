@@ -70,5 +70,55 @@ $ php artisan addon:install defr.extension.seeder_make
 
 ### Creating seeders
 ```bash
-$ php artisan make:seeder anomaly.module.posts
+$ php artisan make:seeder defr.module.backup_manager
+```
+
+#### Example of stream seeder
+```php
+<?php namespace Defr\BackupManagerModule\Dump;
+
+use Defr\BackupManagerModule\Dump\Contract\DumpRepositoryInterface;
+use Anomaly\Streams\Platform\Database\Seeder\Seeder;
+use Illuminate\Contracts\Config\Repository;
+
+class DumpSeeder extends Seeder
+{
+
+    /**
+     * The Dump repository.
+     *
+     * @var DumpRepositoryInterface
+     */
+    protected $dumps;
+
+    /**
+     * The config repository.
+     *
+     * @var Repository
+     */
+    protected $config;
+
+    /**
+     * Create a new DumpSeeder instance.
+     *
+     * @param Repository $config
+     * @param DumpRepositoryInterface $dumps
+     */
+    public function __construct(
+        Repository $config,
+        DumpRepositoryInterface $dumps
+    )
+    {
+        $this->config = $config;
+        $this->dumps = $dumps;
+    }
+
+    /**
+     * Run the seeder
+     */
+    public function run()
+    {
+
+    }
+}
 ```
