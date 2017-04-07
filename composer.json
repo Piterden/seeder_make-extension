@@ -1,6 +1,6 @@
 {
     "name": "defr/seeder_make-extension",
-    "description": "Powered for the Streams Platform make:seeder artisan command.",
+    "description": "Powered for the Streams Platform, `make:seeder` artisan command.",
     "type": "streams-addon",
     "keywords": [
         "pyrocms",
