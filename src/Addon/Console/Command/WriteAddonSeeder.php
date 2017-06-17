@@ -1,16 +1,16 @@
 <?php namespace Defr\SeederMakeExtension\Addon\Console\Command;
 
+use Anomaly\Streams\Platform\Stream\Contract\StreamInterface;
 use Anomaly\Streams\Platform\Stream\StreamCollection;
 use Anomaly\Streams\Platform\Support\Parser;
 use Illuminate\Filesystem\Filesystem;
 
 /**
- * Class WriteAddonSeeder
+ * Class for write addon seeder.
  *
- * @author PyroCMS, Inc. <support@pyrocms.com>
- * @author Ryan Thompson <ryan@pyrocms.com>
+ * @package    defr.extension.seeder_make
  *
- * @link   http://pyrocms.com/
+ * @author     Denis Efremov <efremov.a.denis@gmail.com>
  */
 class WriteAddonSeeder
 {
@@ -44,6 +44,13 @@ class WriteAddonSeeder
     private $vendor;
 
     /**
+     * The streams collection.
+     *
+     * @var StreamCollection
+     */
+    private $streams;
+
+    /**
      * Create a new WriteAddonSeeder instance.
      *
      * @param string           $path    The path
@@ -74,26 +81,16 @@ class WriteAddonSeeder
         $slug   = ucfirst(camel_case($this->slug));
         $type   = ucfirst(camel_case($this->type));
         $vendor = ucfirst(camel_case($this->vendor));
+        $addon  = $slug . $type;
 
-        $addon = $slug.$type;
-        $class = $addon.'Seeder';
-
+        $class     = $addon . 'Seeder';
         $namespace = "{$vendor}\\{$addon}";
+        $uses      = $this->getUses($namespace)->implode("\n");
+        $calls     = $this->getCalls()->implode("\n        ");
 
-        $uses  = $this->getUses($namespace)->implode("\n");
-        $calls = $this->getCalls()->implode("\n        ");
-
-        $path  = "{$this->path}/src/{$class}.php";
-
-        $template = $filesystem->get(
-            dirname(
-                dirname(
-                    dirname(
-                        dirname(__DIR__)
-                    )
-                )
-            ).'/resources/stubs/addons/seeder.stub'
-        );
+        $path     = "{$this->path}/src/{$class}.php";
+        $template = $filesystem->get(dirname(dirname(dirname(dirname(__DIR__))))
+            . '/resources/stubs/addons/seeder.stub');
 
         $filesystem->makeDirectory(dirname($path), 0755, true, true);
 
@@ -109,14 +106,14 @@ class WriteAddonSeeder
      * @param  string     $namespace The namespace
      * @return Collection The uses.
      */
-    public function getUses($namespace)
+    private function getUses(string $namespace)
     {
         return $this->streams->map(
-            function ($stream) use ($namespace)
+            function (StreamInterface $stream) use ($namespace)
             {
-                $name = ucfirst(str_singular($stream->getSlug()));
+                $entity = $this->getName($stream->getSlug());
 
-                return "use {$namespace}\\{$name}\\{$name}Seeder;";
+                return "use {$namespace}\\{$entity}\\{$entity}Seeder;";
             }
         );
     }
@@ -126,14 +123,14 @@ class WriteAddonSeeder
      *
      * @return Collection The calls.
      */
-    public function getCalls()
+    private function getCalls()
     {
         return $this->streams->map(
-            function ($stream)
+            function (StreamInterface $stream)
             {
-                $name = ucfirst(str_singular($stream->getSlug()));
+                $entity = $this->getName($stream->getSlug());
 
-                return "\$this->call({$name}Seeder::class);";
+                return "\$this->call({$entity}Seeder::class);";
             }
         );
     }
@@ -144,7 +141,7 @@ class WriteAddonSeeder
      * @param  string $slug The slug
      * @return string The name.
      */
-    public function getName($slug)
+    private function getName(string $slug)
     {
         return ucfirst(str_singular($slug));
     }
