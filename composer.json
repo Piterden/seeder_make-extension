@@ -1,24 +1,28 @@
 {
     "name": "defr/seeder_make-extension",
-    "description": "Powered for the Streams Platform, `make:seeder` artisan command.",
+    "description": "The Streams Platform addon, extended `make:seeder` artisan command.",
     "type": "streams-addon",
     "keywords": [
         "pyrocms",
         "streams-platform",
-        "laravel-cms",
+        "laravel",
         "artisan",
-        "seeder"
+        "seeder",
+        "command",
+        "addon"
     ],
     "authors": [
         {
             "name": "Denis Efremov",
-            "email": "efremov.a.denis@gmail.com",
-            "homepage": "http://pyrocms.com/",
-            "role": "developer"
+            "email": "efremov.a.denis@gmail.com"
         }
     ],
     "support": {
         "email": "efremov.a.denis@gmail.com"
+    },
+    "require": {
+        "php": ">=5.5.9",
+        "anomaly/streams-platform": "1.2.*"
     },
     "license": "MIT",
     "autoload": {

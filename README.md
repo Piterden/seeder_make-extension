@@ -1,11 +1,11 @@
 # Seeder Make Command
+
 ## Streams Platform Addon. `seeder_make-extension` for PyroCMS.
 
-   > **Requires `"minimum-stability": "dev"` flag in `composer.json`**
+> Enhancement of standard `make:seeder` command.
 
-Enhancement of standard `make:seeder` command.
+## Features
 
-### Features
 * Needs addon to be selected;
 * Checks for available streams in addon;
 * Ask for which of streams you would like to create seeder;
@@ -14,38 +14,26 @@ Enhancement of standard `make:seeder` command.
 
 ***
 
-## Download
-Clone repository into `addons/{app_reference}/defr/seeder_make-extension` folder, or add this module to your PyroCMS project manually uploading files.
+## Installation
 
-### Alternative way
-Add to `composer.json`:
-```js
-    "require": {
-    
-        // ...,
-        
-        "defr/seeder_make-extension": "dev-master"
-    },
-    
-    "repositories": [
-        
-        // ...,
-        
-        {
-            "url": "https://github.com/Piterden/seeder_make-extension",
-            "type": "git"
-        }
-    ],
+### Step 1
+
+Run
+```bash
+$ composer require defr/seeder_make-extension
 ```
 
-Run `composer update` command.
+Either, add to `require` section of `composer.json`:
+```json
+    "defr/seeder_make-extension": "~1.0.0",
+```
+Run `composer update` command, which will install extension to the `core` folder!
 
-***
+### Step 2
 
-## Installation
-After placing files in correct place, you will need to install migrations using the PyroCMS Control Panel or simply run one of following commands:
+Then you would need to install extension to PyroCMS
 ```bash
-$ php artisan module:install seeder_make
+$ php artisan extension:install seeder_make
 ```
 or
 ```bash
@@ -58,22 +46,29 @@ $ php artisan addon:install defr.extension.seeder_make
 
 ### Available options
 
-* Usage:
-  - make:seeder [options] [--] \<namespace\>
+```bash
+Usage:
+  php artisan make:seeder [options] [--] \<namespace\>
 
-* Arguments:
-  - namespace              The namespace of the addon. Full dotted notation - {vendor}.{type}.{slug}
+Arguments:
+  namespace           The namespace of the addon. Full dotted notation - {vendor}.{type}.{slug}
 
-* Options:
-  - --stream[=STREAM]  The stream slug.
-  - --shared           Indicates if the addon should be created in shared addons.
+Options:
+  --stream[=STREAM]   The stream slug.
+  --shared            Indicates if the addon should be created in shared addons.
+```
 
 ### Creating seeders
 ```bash
-$ php artisan make:seeder defr.module.backup_manager
+$ php artisan make:seeder defr.module.seeder_make
 ```
 
-#### Example of stream seeder
+***
+
+## Examples
+
+### Example of generated stream seeder
+
 ```php
 <?php namespace Defr\BackupManagerModule\Dump;
 
@@ -122,3 +117,5 @@ class DumpSeeder extends Seeder
     }
 }
 ```
+
+***
