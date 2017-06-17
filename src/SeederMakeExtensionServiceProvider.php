@@ -3,17 +3,15 @@
 use Anomaly\Streams\Platform\Addon\AddonServiceProvider;
 use Defr\SeederMakeExtension\Database\Seeder\Console\SeederMakeCommand;
 
+/**
+ * Extension service provider class.
+ *
+ * @package    defr.extension.seeder_make
+ *
+ * @author     Denis Efremov <efremov.a.denis@gmail.com>
+ */
 class SeederMakeExtensionServiceProvider extends AddonServiceProvider
 {
-
-    /**
-     * Addon commands
-     *
-     * @var array
-     */
-    protected $commands = [
-        SeederMakeCommand::class,
-    ];
 
     /**
      * Register the addon
