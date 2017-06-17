@@ -1,43 +1,53 @@
 <?php namespace Defr\SeederMakeExtension\Stream\Console\Command;
 
+use Illuminate\Filesystem\Filesystem;
 use Anomaly\Streams\Platform\Addon\Addon;
 use Anomaly\Streams\Platform\Support\Parser;
-use Illuminate\Filesystem\Filesystem;
 
 /**
- * Class for write entity seeder.
+ * Class WriteEntitySeeder
  *
- * @package    defr.extension.seeder_make
+ * @author PyroCMS, Inc. <support@pyrocms.com>
+ * @author Ryan Thompson <ryan@pyrocms.com>
  *
- * @author     Denis Efremov <efremov.a.denis@gmail.com>
+ * @link   http://pyrocms.com/
  */
 class WriteEntitySeeder
 {
+
+    /**
+     * The entity slug.
+     *
+     * @var string
+     */
+    private $slug;
 
     /**
      * The addon instance.
      *
      * @var Addon
      */
-    protected $addon;
+    private $addon;
 
     /**
-     * The stream slug.
+     * The entity stream namespace.
      *
      * @var string
      */
-    protected $slug;
+    private $namespace;
 
     /**
      * Create a new WriteEntitySeeder instance.
      *
-     * @param Addon   $addon
+     * @param Addon        $addon
      * @param $slug
+     * @param $namespace
      */
-    public function __construct(Addon $addon, $slug)
+    public function __construct(Addon $addon, $slug, $namespace)
     {
-        $this->slug  = $slug;
-        $this->addon = $addon;
+        $this->slug      = $slug;
+        $this->addon     = $addon;
+        $this->namespace = $namespace;
     }
 
     /**
@@ -48,16 +58,26 @@ class WriteEntitySeeder
      */
     public function handle(Parser $parser, Filesystem $filesystem)
     {
-        $entities  = camel_case($this->slug);
-        $suffix    = ucfirst($entities);
-        $entity    = str_singular($suffix);
+        $entities = camel_case($this->slug);
+
+        $suffix   = ucfirst($entities);
+        $entity   = str_singular($suffix);
+
         $class     = "{$entity}Seeder";
+
         $namespace = $this->addon->getTransformedClass("{$entity}");
 
         $path = $this->addon->getPath("src/{$entity}/{$entity}Seeder.php");
 
-        $template = $filesystem->get(dirname(dirname(dirname(dirname(__DIR__))))
-            . '/resources/stubs/entity/seeder.stub');
+        $template = $filesystem->get(
+            dirname(
+                dirname(
+                    dirname(
+                        dirname(__DIR__)
+                    )
+                )
+            ).'/resources/stubs/entity/seeder.stub'
+        );
 
         $filesystem->makeDirectory(dirname($path), 0755, true, true);
 

@@ -12,14 +12,11 @@ use \Illuminate\Filesystem\Filesystem;
 use \Illuminate\Support\Composer;
 
 /**
- * Seeder make command class.
- *
- * @package    defr.extension.seeder_make
- *
- * @author     Denis Efremov <efremov.a.denis@gmail.com>
+ * Class SeederMakeCommand
  */
 class SeederMakeCommand extends \Illuminate\Console\Command
 {
+
     use DispatchesJobs;
 
     /**
@@ -34,7 +31,7 @@ class SeederMakeCommand extends \Illuminate\Console\Command
      *
      * @var string
      */
-    protected $description = 'Create a new seeder classes for addon';
+    protected $description = 'Create a new seeder class for addon';
 
     /**
      * All streams string value
@@ -46,15 +43,15 @@ class SeederMakeCommand extends \Illuminate\Console\Command
     /**
      * The Composer instance.
      *
-     * @var Composer
+     * @var \Illuminate\Support\Composer
      */
     protected $composer;
 
     /**
      * Create a new command instance.
      *
-     * @param  Filesystem $files
-     * @param  Composer   $composer
+     * @param  \Illuminate\Filesystem\Filesystem $files
+     * @param  \Illuminate\Support\Composer      $composer
      * @return void
      */
     public function __construct(Filesystem $files, Composer $composer)
@@ -75,7 +72,6 @@ class SeederMakeCommand extends \Illuminate\Console\Command
         {
             throw new \Exception('Addon could not be found.');
         }
-
         $path   = $addon->getPath();
         $type   = $addon->getType();
         $slug   = $addon->getSlug();
@@ -95,7 +91,6 @@ class SeederMakeCommand extends \Illuminate\Console\Command
 
         /* @var StreamCollection $streams */
         $streams = $this->getStreams($slug);
-
         $answers = $this->makeQuestion($streams);
 
         if (array_search($this->getAllChoice(), $answers) === false)
@@ -112,7 +107,11 @@ class SeederMakeCommand extends \Illuminate\Console\Command
         {
             $slug = $stream->getSlug();
 
-            $this->dispatch(new WriteEntitySeeder($addon, $slug));
+            $this->dispatch(new WriteEntitySeeder(
+                $addon,
+                $slug,
+                $stream->getNamespace()
+            ));
 
             $singular = ucfirst(str_singular($slug));
 
@@ -134,7 +133,7 @@ class SeederMakeCommand extends \Illuminate\Console\Command
      * @throws \Exception
      * @return string       The stream namespace.
      */
-    private function getAddonNamespace()
+    public function getAddonNamespace()
     {
         $namespace = $this->argument('namespace');
 
@@ -152,7 +151,7 @@ class SeederMakeCommand extends \Illuminate\Console\Command
      * @param  string             $slug The addon slug
      * @return StreamCollection
      */
-    private function getStreams($slug)
+    public function getStreams($slug)
     {
         return $this->dispatch(new GetStreams($slug))->filter(
             function ($stream)
@@ -167,7 +166,7 @@ class SeederMakeCommand extends \Illuminate\Console\Command
      *
      * @return string All value.
      */
-    private function getAllChoice()
+    public function getAllChoice()
     {
         return $this->allChoice;
     }
@@ -178,7 +177,7 @@ class SeederMakeCommand extends \Illuminate\Console\Command
      * @param  StreamCollection $streams  The streams
      * @return array            Answers
      */
-    private function makeQuestion(StreamCollection $streams)
+    public function makeQuestion(StreamCollection $streams)
     {
         $choices = $streams->map(
             function ($stream)
